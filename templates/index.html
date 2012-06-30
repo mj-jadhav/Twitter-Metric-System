@@ -1,0 +1,206 @@
+{% extends "layout.html" %}
+{% block body %}
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+	<!-- Import Google Font - Yanone Kaffeesatz  -->	
+	<link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css' />
+ 
+	<style type="text/css"> 
+	
+	* { margin: 0px; padding: 0px; }
+	
+	body { 
+		margin: 0 auto; 
+		background: #f5f5f5; 	
+		color: #555;	 
+		width: 800px; 
+				
+		/* make reference to the Yanone Kaffeesatz font */
+		font-family: 'Yanone Kaffeesatz', arial, sans-serif;
+	}
+	
+	h1 { 
+		color: #555; 
+		margin: 0 0 20px 0; 
+	}	
+		
+	label {	
+		font-size: 20px;
+		color: #666; 
+	}
+	
+	form { 
+		float: left;
+		border: 1px solid #ddd; 
+		padding: 30px 40px 20px 40px; 
+		margin: 75px 0 0 0;
+		width: 715px;
+		background: #fff;
+				
+		/* -- CSS3 - define rounded corners for the form -- */	
+		-webkit-border-radius: 10px;
+		-moz-border-radius: 10px;
+		border-radius: 10px; 		
+		
+		/* -- CSS3 - create a background graident -- */
+		background: -webkit-gradient(linear, 0% 0%, 0% 40%, from(#EEE), to(#FFFFFF)); 
+		background: -moz-linear-gradient(0% 40% 90deg,#FFF, #EEE); 
+		
+		/* -- CSS3 - add a drop shadow -- */
+		-webkit-box-shadow:0px 0 50px #ccc;
+		-moz-box-shadow:0px 0 50px #ccc; 
+		box-shadow:0px 0 50px #ccc;		 		
+	}	
+	
+	fieldset { border: none; }
+	
+	#user-details { 
+		float: left;
+		width: 230px; 
+	}
+	
+	#user-message { 
+		float: right;
+		width: 405px;
+	}
+	
+	input, textarea { 		
+		padding: 8px; 
+		margin: 4px 0 20px 0; 
+		background: #fff; 
+		width: 220px; 
+		font-size: 14px; 
+		color: #555; 
+		border: 1px #ddd solid;
+		
+		/* -- CSS3 Shadow - create a shadow around each input element -- */ 
+		-webkit-box-shadow: 0px 0px 4px #aaa;
+		-moz-box-shadow: 0px 0px 4px #aaa; 
+		box-shadow: 0px 0px 4px #aaa;
+		
+		/* -- CSS3 Transition - define what the transition will be applied to (i.e. the background) -- */		
+		-webkit-transition: background 0.3s linear;							
+	}
+	
+	textarea {		
+		width: 390px; 
+		height: 175px; 		 		
+	}
+	
+	input:hover, textarea:hover { 
+		background: #eee; 
+	}
+		
+	input.submit { 	
+		width: 150px; 
+		color: #eee; 
+		text-transform: uppercase; 
+		margin-top: 10px;
+		background-color: #18a5cc;
+		border: none;
+		
+		/* -- CSS3 Transition - define which property to animate (i.e. the shadow)  -- */
+		-webkit-transition: -webkit-box-shadow 0.3s linear;
+		
+		/* -- CSS3 - Rounded Corners -- */
+		-moz-border-radius: 4px; 
+		-webkit-border-radius: 4px;
+		border-radius: 4px; 
+						
+		/* -- CSS3 Shadow - create a shadow around each input element -- */ 
+		background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#18a5cc), to(#0a85a8)); 
+		background: -moz-linear-gradient(25% 75% 90deg,#0a85a8, #18a5cc);		
+	} 
+	
+	input.submit:hover { 		
+		-webkit-box-shadow: 0px 0px 20px #555;
+		-moz-box-shadow: 0px 0px 20px #aaa; 
+		box-shadow: 0px 0px 20px #555;	
+		cursor:  pointer; 
+	} 		
+				
+	</style> 
+	
+	<script type="text/javascript">
+		function clearCanvas(){
+			var canvas = document.getElementById("chartCanvas1");
+			var context = canvas.getContext("2d");
+			context.clearRect(0, 0, canvas.width, canvas.height);
+}
+		
+  $(function() {
+    $('input#submit').bind('click', function() {
+		document.getElementById("Score").innerHTML="Getting Your Score. Please Wait!<br/><br/><img src='{{url_for('static', filename='ajax-loader.gif') }}'/>";
+		$('#canvaas').hide();
+      $.getJSON($SCRIPT_ROOT + '/verify', {
+        pin: $('input[name="pin"]').val()
+      }, function(data) {
+			if(typeof chart1 != 'undefined')
+				clearCanvas();
+			var chart1 = new AwesomeChart('chartCanvas1');
+			chart1.chartType = "horizontal bars";
+			if(data.Influenced=="")
+				chart1.title = "Score for " + data.Username
+			else
+				chart1.title = "Score for " + data.Username + " You were influenced by " + data.Influenced;
+			var Total = data.Followers + data.Lists + data.VerifiedCount + data.Verified + data.Contributors + data.Blocked + data.Protected;
+            chart1.data = [data.Followers,data.Lists,data.VerifiedCount,data.Verified,data.Contributors,data.Blocked,data.Protected,Total];
+            chart1.labels = ['Followers','Lists you are a part of','Verified Followers','Verified Account','Contributors Enabled','Haven\'t Blocked Many People','Public Access to your account','Total'];
+            chart1.colors = ['#006CFF', '#FF6600', '#34A038', '#945D59', '#93BBF4', '#FF6600', '#34A038', '#945D59'];
+            chart1.randomColors = true;
+            document.getElementById("Score").innerHTML="";
+            document.getElementById("share").innerHTML="Share this link: http://localhost:5000/share/" + data.Username;
+            
+            $('#canvaas').show();
+            chart1.draw();
+      });
+      return false;
+    });
+  });
+	</script>
+	<script type=text/javascript src="{{url_for('static', filename='awesomechart.js') }}"></script>
+	
+
+</head>
+    <body>
+		<form action="#"> 
+	
+		<h1>Twitter Metric System</h1>
+				
+		<fieldset id="user-details">	
+			
+			<p>
+				<h2>Instructions:</h2><br/>
+				1. Click 'Authenticate Me' to verify your account<br/>
+			</p>
+				
+			<a href="/auth" target="_blank" name="Authenticate"><input type="button" value="Authenticate Me" class="submit" /></a>
+			<br/>
+			2. Copy Paste the 'Pin' below<br/>
+			<br/>	
+			<label for="phone">Pin:</label> 
+			
+			<input type="text" name="pin" id="pin" value='Pin' onfocus="if(this.value=='Pin') value='';" onblur="if(this.value=='') value='Pin'"/>
+			3. Click <br/>
+			<input type="button" value="Show My Score" name="submit" class="submit" id="submit"/>		
+			
+			<br/>
+			<span id="share"></span>		
+		</fieldset><!--end user-details-->
+		
+		<fieldset id="user-message">
+		
+			<div class="charts_container">
+				<span id="Score"></span>
+				<div class="chart_container" id='canvaas'>
+					<canvas id="chartCanvas1" width="400" height="400">
+						Your web-browser does not support the HTML 5 canvas element.
+					</canvas>
+				</div>
+			</div>
+		</fieldset><!-- end user-message -->
+	</form>	
+{% endblock %}
+</body>
+</html>
+
+
