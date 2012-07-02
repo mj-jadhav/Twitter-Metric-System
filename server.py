@@ -43,6 +43,7 @@ def get_verification():
 	try:
 		# Retrieve the Pin
 		pin = request.args.get('pin', 0, type=int)
+		influenced=""
 		if 'pin' in session:
 			if session['pin'] == pin:#check for already exitsting pin
 				#Return score stored in session
@@ -54,6 +55,7 @@ def get_verification():
 				#Clear the 'influenced' session
 				session['influenced']="" 
 				return jsonify(Username=session['username'],Followers=session['followers'],Lists=session['lists'],VerifiedCount=session['verifiedcount'],Verified=session['verified'],Contributors=session['contributors'],Blocked=session['blocked'],Protected=session['protected'],Influenced=influenced)
+			 
 		#Authenticate the User Pin With OAuth handler Object
 		auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 		auth.set_request_token(session['key'],session['secret'])
