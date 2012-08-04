@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Twitter Metric System (A part of Infinitely beta's sponsorship test)
 =====================
 
@@ -30,3 +31,9 @@ Server side
 	
 Client side - [http://localhost:5000/] (http://localhost:5000/)
 
+=======
+Twitter-Metric-System
+=====================
+
+The Twitter Metric System scores the twitter user.
+>>>>>>> b7766a47d1fbbdef7e3e88c0a8844f13bcbc9f97
